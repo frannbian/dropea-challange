@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Dtos\EntityDto;
+use App\Enums\CategoryEnum;
 use App\Http\Resources\EntityCollection;
 use App\Http\Resources\EntityResource;
 use App\Models\Category;
@@ -53,10 +54,16 @@ class EntityService
     /**
      * Get entities from database
      */
-    public static function get(): EntityCollection
+    public static function get(?string $category = null): EntityCollection
     {
-        $entities = Entity::with('category')->paginate(15);
+        $entities = Entity::with('category');
+        if ($category && CategoryEnum::tryFrom($category)) {
+            $entities->whereHas('category', function ($query) use ($category) {
+                $query->whereCategory($category);
+            });
+        }
 
+        $entities = $entities->paginate(15);
         return new EntityCollection($entities);
     }
 }

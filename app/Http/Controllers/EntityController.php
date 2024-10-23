@@ -21,11 +21,11 @@ class EntityController extends Controller
         $this->entityService = $entityService;
     }
 
-    public function index(): EntityCollection
+    public function index(?string $category): EntityCollection
     {
         $cacheKey = md5('entities');
-        $entities = Cache::tags(['entities'])->remember($cacheKey, 3600, function () {
-            return $this->entityService->get();
+        $entities = Cache::tags(['entities'])->remember($cacheKey, 3600, function () use ($category) {
+            return $this->entityService->get($category);
         });
 
         return $entities;

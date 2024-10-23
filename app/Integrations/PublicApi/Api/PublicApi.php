@@ -25,7 +25,6 @@ class PublicApi
         $response = Http::publicApi()
             ->get('/entries');
 
-
         if (! $response->ok()) {
             //TODO: send notifications to a channel like slack or email advicing API does not working.
             Log::error(message: json_encode(['error' => 'There was an error obtaining entries by command', 'response' => $response->json()]));
